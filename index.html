@@ -360,6 +360,10 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      /* Forçar ocupação total no mobile */
+      min-height: -webkit-fill-available;
+      min-height: 100vh;
+      overflow: hidden;
     }
 
     .png-preview-fullscreen img {
@@ -367,6 +371,9 @@
       max-height: 100vh;
       object-fit: contain;
       border: none;
+      /* Garantir centralização no mobile */
+      display: block;
+      margin: auto;
     }
 
     .png-preview-close {
@@ -727,6 +734,30 @@
       // Adicionar ao body
       document.body.appendChild(previewContainer);
       
+      // Configurações específicas para mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // Configurar viewport para tela cheia no mobile
+        let viewport = document.querySelector('meta[name="viewport"]');
+        if (viewport) {
+          viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+        }
+        
+        // Esconder interface do navegador
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.height = '100vh';
+        document.body.style.height = '100vh';
+        
+        // Forçar scroll para esconder barra de endereços
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+        }, 100);
+      }
+      
       // Entrar em tela cheia nativa do navegador
       if (previewContainer.requestFullscreen) {
         previewContainer.requestFullscreen().catch(() => {});
@@ -775,6 +806,22 @@
           document.webkitExitFullscreen().catch(() => {});
         } else if (document.mozCancelFullScreen) {
           document.mozCancelFullScreen().catch(() => {});
+        }
+        
+        // Restaurar configurações do mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+          // Restaurar viewport
+          let viewport = document.querySelector('meta[name="viewport"]');
+          if (viewport) {
+            viewport.setAttribute('content', 'width=device-width, initial-scale=1');
+          }
+          
+          // Restaurar overflow e height
+          document.documentElement.style.overflow = '';
+          document.body.style.overflow = '';
+          document.documentElement.style.height = '';
+          document.body.style.height = '';
         }
         
         // Remover event listener
