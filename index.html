@@ -396,22 +396,11 @@
       font-size: 14px;
       text-align: center;
       z-index: 10001;
-      animation: fadeInOut 3s ease-in-out;
-    }
-
-    @keyframes fadeInOut {
-      0%, 100% { opacity: 0; }
-      20%, 80% { opacity: 1; }
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
 
     @media (max-width: 768px) {
-      .png-preview-close {
-        top: 10px;
-        right: 10px;
-        padding: 8px 12px;
-        font-size: 14px;
-      }
-      
       .png-preview-instructions {
         bottom: 20px;
         font-size: 12px;
@@ -726,24 +715,38 @@
       img.src = canvas.toDataURL('image/png', 1.0);
       img.alt = 'Preview da Claquete';
       
-      // Criar botão de fechar
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'png-preview-close';
-      closeBtn.innerHTML = '✕ Fechar';
-      closeBtn.onclick = closePreviewFullscreen;
-      
-      // Criar instruções específicas para câmera
+      // Criar instruções específicas para câmera (que vai desaparecer)
       const instructions = document.createElement('div');
       instructions.className = 'png-preview-instructions';
       instructions.innerHTML = 'Preview para câmera • Toque para fechar';
       
       // Adicionar elementos
       previewContainer.appendChild(img);
-      previewContainer.appendChild(closeBtn);
       previewContainer.appendChild(instructions);
       
       // Adicionar ao body
       document.body.appendChild(previewContainer);
+      
+      // Entrar em tela cheia nativa do navegador
+      if (previewContainer.requestFullscreen) {
+        previewContainer.requestFullscreen().catch(() => {});
+      } else if (previewContainer.webkitRequestFullscreen) {
+        previewContainer.webkitRequestFullscreen().catch(() => {});
+      } else if (previewContainer.mozRequestFullScreen) {
+        previewContainer.mozRequestFullScreen().catch(() => {});
+      }
+      
+      // Fazer as instruções desaparecerem após 1 segundo
+      setTimeout(() => {
+        if (instructions && instructions.parentNode) {
+          instructions.style.opacity = '0';
+          setTimeout(() => {
+            if (instructions.parentNode) {
+              instructions.parentNode.removeChild(instructions);
+            }
+          }, 300); // Fade out suave
+        }
+      }, 1000);
       
       // Event listeners
       previewContainer.onclick = closePreviewFullscreen;
@@ -765,6 +768,15 @@
     function closePreviewFullscreen() {
       const preview = document.querySelector('.png-preview-fullscreen');
       if (preview) {
+        // Sair da tela cheia
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen().catch(() => {});
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen().catch(() => {});
+        }
+        
         // Remover event listener
         if (preview._keyHandler) {
           document.removeEventListener('keydown', preview._keyHandler);
