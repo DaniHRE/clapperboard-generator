@@ -367,13 +367,16 @@
     }
 
     .png-preview-fullscreen img {
-      max-width: 100vw;
-      max-height: 100vh;
+      max-width: 95vw;
+      max-height: 95vh;
       object-fit: contain;
       border: none;
       /* Garantir centralização no mobile */
       display: block;
       margin: auto;
+      /* Adicionar padding para evitar corte nas bordas */
+      padding: 2.5vh 2.5vw;
+      box-sizing: border-box;
     }
 
     .png-preview-close {
@@ -408,6 +411,23 @@
     }
 
     @media (max-width: 768px) {
+      .png-preview-fullscreen {
+        /* Ajustar altura para mobile considerando barras do navegador */
+        height: 100vh;
+        min-height: 100vh;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      
+      .png-preview-fullscreen img {
+        max-width: 90vw;
+        max-height: 90vh;
+        padding: 5vh 5vw;
+        /* Garantir que a imagem inteira seja visível */
+        object-fit: contain;
+        object-position: center;
+      }
+      
       .png-preview-instructions {
         bottom: 20px;
         font-size: 12px;
@@ -747,8 +767,10 @@
         // Esconder interface do navegador
         document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
-        document.documentElement.style.height = '100vh';
-        document.body.style.height = '100vh';
+        
+        // Ajustar altura considerando safe areas no mobile
+        previewContainer.style.height = '100vh';
+        previewContainer.style.minHeight = '-webkit-fill-available';
         
         // Forçar scroll para esconder barra de endereços
         setTimeout(() => {
@@ -756,6 +778,11 @@
           document.documentElement.scrollTop = 0;
           document.body.scrollTop = 0;
         }, 100);
+        
+        // Ajustar imagem para mobile
+        img.style.maxWidth = '90vw';
+        img.style.maxHeight = '85vh';
+        img.style.objectFit = 'contain';
       }
       
       // Entrar em tela cheia nativa do navegador
@@ -817,11 +844,9 @@
             viewport.setAttribute('content', 'width=device-width, initial-scale=1');
           }
           
-          // Restaurar overflow e height
+          // Restaurar overflow
           document.documentElement.style.overflow = '';
           document.body.style.overflow = '';
-          document.documentElement.style.height = '';
-          document.body.style.height = '';
         }
         
         // Remover event listener
