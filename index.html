@@ -169,6 +169,261 @@
       background: var(--fg);
       color: var(--bg);
     }
+
+    /* Modo Tela Cheia */
+    .fullscreen-mode {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 9999;
+      background: var(--bg);
+      margin: 0 !important;
+      max-width: none !important;
+      padding: 0 !important;
+    }
+
+    .fullscreen-mode .grid {
+      height: 100vh;
+      width: 100vw;
+      padding: clamp(4px, 1vw, 8px);
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    .fullscreen-mode .box {
+      border-width: clamp(1px, 0.3vw, 2px);
+      min-height: auto;
+    }
+
+    .fullscreen-mode .controls {
+      position: fixed;
+      top: 5px;
+      right: 5px;
+      background: rgba(0, 0, 0, 0.9);
+      padding: 5px;
+      border-radius: 6px;
+      margin: 0;
+      z-index: 10000;
+      opacity: 0.2;
+      transition: opacity 0.3s ease;
+      transform: scale(0.7);
+    }
+
+    .fullscreen-mode .controls:hover,
+    .fullscreen-mode .controls:active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .fullscreen-mode .controls .btn {
+      padding: 4px 6px;
+      font-size: 8px;
+      margin: 1px;
+      border-width: 1px;
+    }
+
+    .fullscreen-exit-btn {
+      position: fixed !important;
+      top: 10px;
+      left: 10px;
+      z-index: 10001;
+      background: rgba(255, 0, 0, 0.9) !important;
+      color: white !important;
+      border: 1px solid white !important;
+      padding: 8px 10px !important;
+      font-size: 12px !important;
+      border-radius: 6px;
+      opacity: 0.6;
+      transition: all 0.3s ease;
+      transform: scale(0.8);
+    }
+
+    .fullscreen-exit-btn:hover,
+    .fullscreen-exit-btn:active {
+      opacity: 1;
+      background: rgba(255, 0, 0, 1) !important;
+      transform: scale(1);
+    }
+
+    /* Otimizações específicas para mobile em tela cheia */
+    @media (max-width: 768px) {
+      .fullscreen-mode {
+        /* Remover qualquer padding/margin */
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      
+      .fullscreen-mode .grid {
+        padding: 2px;
+        gap: 0;
+      }
+      
+      .fullscreen-mode .box {
+        padding: clamp(4px, 1.5vw, 8px);
+        border-width: 1px;
+      }
+      
+      .fullscreen-mode .value-xxl {
+        font-size: clamp(20px, 6vw, 40px) !important;
+      }
+      
+      .fullscreen-mode .digital {
+        font-size: clamp(28px, 8vw, 50px) !important;
+        letter-spacing: 0.02em !important;
+      }
+      
+      .fullscreen-mode .label {
+        font-size: clamp(6px, 1.5vw, 9px);
+        margin-bottom: 1px;
+      }
+      
+      .fullscreen-mode .value {
+        font-size: clamp(10px, 2.5vw, 14px);
+        margin-top: 0.05rem;
+      }
+      
+      .fullscreen-mode .value-xl {
+        font-size: clamp(12px, 3vw, 18px);
+      }
+
+      /* Botão de saída menor no mobile */
+      .fullscreen-exit-btn {
+        top: 5px;
+        left: 5px;
+        padding: 6px 8px !important;
+        font-size: 10px !important;
+        transform: scale(0.7);
+      }
+      
+      .fullscreen-mode .controls {
+        top: 3px;
+        right: 3px;
+        padding: 3px;
+        transform: scale(0.6);
+      }
+      
+      .fullscreen-mode .controls:hover,
+      .fullscreen-mode .controls:active {
+        transform: scale(0.8);
+      }
+    }
+
+    /* Landscape específico para celular */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .fullscreen-mode .digital {
+        font-size: clamp(32px, 10vw, 60px) !important;
+      }
+      
+      .fullscreen-mode .value-xxl {
+        font-size: clamp(24px, 7vw, 48px) !important;
+      }
+    }
+
+    /* Portrait específico para celular */
+    @media (max-width: 768px) and (orientation: portrait) {
+      .fullscreen-mode .grid {
+        padding: 4px;
+      }
+      
+      .fullscreen-mode .digital {
+        font-size: clamp(24px, 6vw, 36px) !important;
+      }
+      
+      .fullscreen-mode .value-xxl {
+        font-size: clamp(18px, 5vw, 28px) !important;
+      }
+    }
+
+    /* Ocultar scrollbars completamente */
+    .fullscreen-mode::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .fullscreen-mode {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      overflow: hidden;
+    }
+
+    /* Prévia PNG em Tela Cheia */
+    .png-preview-fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .png-preview-fullscreen img {
+      max-width: 100vw;
+      max-height: 100vh;
+      object-fit: contain;
+      border: none;
+    }
+
+    .png-preview-close {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 0, 0, 0.9);
+      color: white;
+      border: 2px solid white;
+      padding: 12px 16px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 10001;
+      font-weight: bold;
+    }
+
+    .png-preview-instructions {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      text-align: center;
+      z-index: 10001;
+      animation: fadeInOut 3s ease-in-out;
+    }
+
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; }
+      20%, 80% { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .png-preview-close {
+        top: 10px;
+        right: 10px;
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+      
+      .png-preview-instructions {
+        bottom: 20px;
+        font-size: 12px;
+        padding: 8px 16px;
+      }
+    }
+
+    /* Evitar zoom no mobile */
+    .fullscreen-mode input,
+    .fullscreen-mode [contenteditable] {
+      font-size: 16px !important; /* Evita zoom automático no iOS */
+    }
   </style>
 </head>
 <body>
@@ -244,7 +499,8 @@
       <button class="btn" onclick="loadData()">Carregar</button>
       <button class="btn" onclick="resetData()">Limpar</button>
       <button class="btn" onclick="incrementTake()">Next Take</button>
-      <button class="btn" onclick="exportImage()">Exportar PNG</button>
+      <button class="btn" onclick="exportImage()">💾 Exportar PNG</button>
+      <button class="btn" onclick="showPreview()" id="preview-btn">🎬 Preview</button>
     </div>
   </main>
 
@@ -370,9 +626,9 @@
       }, 2500);
     }
 
-    // Função para exportar como imagem
+    // Função para exportar como imagem (só salva)
     function exportImage() {
-      showNotification('Gerando imagem...');
+      showNotification('Gerando e salvando imagem...');
       
       // Esconder os controles temporariamente
       const controls = document.querySelector('.controls');
@@ -405,20 +661,119 @@
         const take = fields.take.textContent || '1';
         const filename = `claquete_${slate}_${scene}_${take}.png`;
         
-        // Download da imagem
+        // Download automático da imagem
         const link = document.createElement('a');
         link.download = filename;
         link.href = canvas.toDataURL('image/png', 1.0);
         link.click();
         
-        showNotification(`Imagem salva: ${filename}`);
+        showNotification(`✅ Imagem salva: ${filename}`);
         
       }).catch(error => {
         // Restaurar controles em caso de erro
         controls.style.display = 'flex';
         console.error('Erro ao exportar:', error);
-        showNotification('Erro ao exportar imagem');
+        showNotification('❌ Erro ao exportar imagem');
       });
+    }
+
+    // Função para mostrar preview em tela cheia (para câmera)
+    function showPreview() {
+      showNotification('Gerando preview...');
+      
+      // Esconder os controles temporariamente
+      const controls = document.querySelector('.controls');
+      controls.style.display = 'none';
+      
+      // Capturar apenas a claquete
+      const claqueteElement = document.querySelector('.frame');
+      
+      html2canvas(claqueteElement, {
+        backgroundColor: '#000000',
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        width: claqueteElement.offsetWidth,
+        height: claqueteElement.offsetHeight,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.querySelector('.digital');
+          if (clonedElement) {
+            clonedElement.style.fontFamily = '"DS-Digi", monospace';
+          }
+        }
+      }).then(canvas => {
+        // Restaurar controles
+        controls.style.display = 'flex';
+        
+        // Mostrar preview em tela cheia
+        showPreviewFullscreen(canvas);
+        
+      }).catch(error => {
+        controls.style.display = 'flex';
+        console.error('Erro no preview:', error);
+        showNotification('❌ Erro no preview');
+      });
+    }
+
+    // Função para mostrar preview em tela cheia (otimizado para câmera)
+    function showPreviewFullscreen(canvas) {
+      // Criar elemento de preview
+      const previewContainer = document.createElement('div');
+      previewContainer.className = 'png-preview-fullscreen';
+      
+      // Criar imagem
+      const img = document.createElement('img');
+      img.src = canvas.toDataURL('image/png', 1.0);
+      img.alt = 'Preview da Claquete';
+      
+      // Criar botão de fechar
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'png-preview-close';
+      closeBtn.innerHTML = '✕ Fechar';
+      closeBtn.onclick = closePreviewFullscreen;
+      
+      // Criar instruções específicas para câmera
+      const instructions = document.createElement('div');
+      instructions.className = 'png-preview-instructions';
+      instructions.innerHTML = 'Preview para câmera • Toque para fechar';
+      
+      // Adicionar elementos
+      previewContainer.appendChild(img);
+      previewContainer.appendChild(closeBtn);
+      previewContainer.appendChild(instructions);
+      
+      // Adicionar ao body
+      document.body.appendChild(previewContainer);
+      
+      // Event listeners
+      previewContainer.onclick = closePreviewFullscreen;
+      
+      // Tecla ESC para fechar
+      const keyHandler = (e) => {
+        if (e.key === 'Escape') {
+          closePreviewFullscreen();
+        }
+      };
+      
+      document.addEventListener('keydown', keyHandler);
+      previewContainer._keyHandler = keyHandler;
+      
+      showNotification('🎬 Preview ativo! Posicione na câmera');
+    }
+
+    // Função para fechar preview
+    function closePreviewFullscreen() {
+      const preview = document.querySelector('.png-preview-fullscreen');
+      if (preview) {
+        // Remover event listener
+        if (preview._keyHandler) {
+          document.removeEventListener('keydown', preview._keyHandler);
+        }
+        
+        // Remover elemento
+        document.body.removeChild(preview);
+        showNotification('Preview fechado');
+      }
     }
 
     // Teclas de atalho
@@ -491,6 +846,30 @@
       // Primeira atualização
       updateDateTime();
     }
+
+    // Adicionar atalho de teclado (removido atalho de tela cheia)
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey || e.metaKey) {
+        switch(e.key) {
+          case 's':
+            e.preventDefault();
+            saveData();
+            break;
+          case 'r':
+            e.preventDefault();
+            resetData();
+            break;
+          case 'e':
+            e.preventDefault();
+            exportImage();
+            break;
+          case 'p':
+            e.preventDefault();
+            showPreview();
+            break;
+        }
+      }
+    });
   </script>
 </body>
 </html>
