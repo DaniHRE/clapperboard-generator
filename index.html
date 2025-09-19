@@ -375,12 +375,65 @@
       /* Garantir que ocupe toda a tela no iOS */
       min-height: 100vh !important;
       min-height: -webkit-fill-available !important;
+      
+      /* Suporte para safe areas no iOS */
+      padding-top: env(safe-area-inset-top, 0);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+      padding-left: env(safe-area-inset-left, 0);
+      padding-right: env(safe-area-inset-right, 0);
     }
 
     .ios-fullscreen img {
-      max-width: 95vw !important;
-      max-height: 95vh !important;
+      width: 100vw !important;
+      height: 100vh !important;
       object-fit: contain !important;
+      object-position: center !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      /* Ajuste para safe areas */
+      width: calc(100vw - env(safe-area-inset-left, 0) - env(safe-area-inset-right, 0)) !important;
+      height: calc(100vh - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0)) !important;
+    }
+
+    /* Estilos específicos para iPhone 13 e similares */
+    @media screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
+      /* iPhone 13/13 Pro específico */
+      .ios-fullscreen {
+        /* Compensar notch e botão home */
+        padding-top: 47px !important;
+        padding-bottom: 34px !important;
+      }
+      
+      .ios-fullscreen img {
+        height: calc(100vh - 81px) !important; /* 47px top + 34px bottom */
+        width: 100vw !important;
+      }
+    }
+
+    @media screen and (device-width: 414px) and (device-height: 896px) {
+      /* iPhone XR, 11 */
+      .ios-fullscreen {
+        padding-top: 44px !important;
+        padding-bottom: 34px !important;
+      }
+      
+      .ios-fullscreen img {
+        height: calc(100vh - 78px) !important;
+        width: 100vw !important;
+      }
+    }
+
+    @media screen and (device-width: 375px) and (device-height: 812px) {
+      /* iPhone X, XS, 11 Pro */
+      .ios-fullscreen {
+        padding-top: 44px !important;
+        padding-bottom: 34px !important;
+      }
+      
+      .ios-fullscreen img {
+        height: calc(100vh - 78px) !important;
+        width: 100vw !important;
+      }
     }
 
     /* Ocultar scrollbars completamente */
@@ -414,15 +467,15 @@
     }
 
     .png-preview-fullscreen img {
-      max-width: 95vw;
-      max-height: 95vh;
+      width: 100vw;
+      height: 100vh;
       object-fit: contain;
+      object-position: center;
       border: none;
       /* Garantir centralização no mobile */
       display: block;
-      margin: auto;
-      /* Adicionar padding para evitar corte nas bordas */
-      padding: 2.5vh 2.5vw;
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
@@ -462,15 +515,16 @@
         /* Ajustar altura para mobile considerando barras do navegador */
         height: 100vh;
         min-height: 100vh;
-        padding: 10px;
+        padding: 0;
         box-sizing: border-box;
       }
       
       .png-preview-fullscreen img {
-        max-width: 90vw;
-        max-height: 90vh;
-        padding: 5vh 5vw;
-        /* Garantir que a imagem inteira seja visível */
+        width: 100vw;
+        height: 100vh;
+        padding: 0;
+        margin: 0;
+        /* Garantir que a imagem inteira seja visível mantendo aspect ratio */
         object-fit: contain;
         object-position: center;
       }
@@ -764,14 +818,47 @@
         return true; // Desktop sempre pode usar
       }
       
-      // Verificar orientação do celular
-      if (screen.orientation) {
-        return screen.orientation.angle === 90 || screen.orientation.angle === -90;
-      } else if (window.orientation !== undefined) {
-        return window.orientation === 90 || window.orientation === -90;
+      // Para iOS, usar uma verificação mais robusta
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      
+      if (isIOS) {
+        // No iOS, verificar múltiplas formas
+        const screenWidth = screen.width;
+        const screenHeight = screen.height;
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        // Verificar orientação do screen primeiro
+        if (screen.orientation) {
+          const isLandscapeByOrientation = screen.orientation.angle === 90 || screen.orientation.angle === -90;
+          if (isLandscapeByOrientation) return true;
+        }
+        
+        // Verificar window.orientation
+        if (window.orientation !== undefined) {
+          const isLandscapeByWindow = Math.abs(window.orientation) === 90;
+          if (isLandscapeByWindow) return true;
+        }
+        
+        // Fallback: comparar dimensões da janela
+        // No iOS, às vezes as dimensões demoram para atualizar
+        const isLandscapeByDimensions = windowWidth > windowHeight;
+        
+        // Também verificar se a largura da janela é próxima da altura da tela
+        // (indicando que está em landscape)
+        const isLandscapeByScreenComparison = windowWidth >= (screenHeight * 0.9);
+        
+        return isLandscapeByDimensions || isLandscapeByScreenComparison;
       } else {
-        // Fallback: verificar dimensões da tela
-        return window.innerWidth > window.innerHeight;
+        // Para Android e outros
+        if (screen.orientation) {
+          return screen.orientation.angle === 90 || screen.orientation.angle === -90;
+        } else if (window.orientation !== undefined) {
+          return window.orientation === 90 || window.orientation === -90;
+        } else {
+          // Fallback: verificar dimensões da tela
+          return window.innerWidth > window.innerHeight;
+        }
       }
     }
 
@@ -799,6 +886,8 @@
         box-sizing: border-box;
       `;
       
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      
       warningOverlay.innerHTML = `
         <div style="background: #ff4444; padding: 20px; border-radius: 15px; margin-bottom: 30px;">
           📱 ⚠️ VIRE O CELULAR ⚠️ 📱
@@ -810,6 +899,12 @@
           O preview só funciona com o celular deitado<br>
           para melhor visualização da claquete
         </div>
+        ${isIOS ? `
+          <div style="margin-top: 20px; font-size: 14px; opacity: 0.7; background: rgba(255,255,0,0.1); padding: 10px; border-radius: 8px;">
+            📱 iPhone detectado: após virar, aguarde alguns segundos<br>
+            para a orientação se estabilizar completamente
+          </div>
+        ` : ''}
         <div style="margin-top: 30px; font-size: 14px; opacity: 0.6;">
           Esta mensagem desaparecerá automaticamente<br>
           quando você virar o celular
@@ -818,21 +913,71 @@
       
       document.body.appendChild(warningOverlay);
       
+      let checkCount = 0;
+      const maxChecks = isIOS ? 20 : 12; // Mais tentativas para iOS
+      
       // Verificar orientação periodicamente
       const checkOrientation = () => {
+        checkCount++;
+        
         if (isMobileLandscape()) {
           document.body.removeChild(warningOverlay);
-          // Aguardar um pouco para a orientação se estabilizar
+          // Aguardar mais tempo no iOS para estabilização
+          const delay = isIOS ? 800 : 500;
           setTimeout(() => {
             actuallyShowPreview();
-          }, 500);
+          }, delay);
+        } else if (checkCount < maxChecks) {
+          // Intervalo menor no iOS para detectar mudança mais rápido
+          const interval = isIOS ? 300 : 500;
+          setTimeout(checkOrientation, interval);
         } else {
-          setTimeout(checkOrientation, 500);
+          // Se chegou ao limite de tentativas, permitir continuar mesmo assim
+          // mas mostrar aviso
+          const warning = document.createElement('div');
+          warning.style.cssText = `
+            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 165, 0, 0.9); color: black; padding: 10px 20px;
+            border-radius: 10px; font-size: 14px; z-index: 25000;
+          `;
+          warning.innerHTML = 'Continuando mesmo em portrait. Pode haver distorção.';
+          warningOverlay.appendChild(warning);
+          
+          setTimeout(() => {
+            if (document.body.contains(warningOverlay)) {
+              document.body.removeChild(warningOverlay);
+            }
+            actuallyShowPreview();
+          }, 2000);
         }
       };
       
       // Começar a verificar após um breve delay
-      setTimeout(checkOrientation, 500);
+      setTimeout(checkOrientation, isIOS ? 600 : 400);
+      
+      // Adicionar listener para mudanças de orientação no iOS
+      if (isIOS) {
+        const orientationHandler = () => {
+          setTimeout(() => {
+            if (isMobileLandscape() && document.body.contains(warningOverlay)) {
+              document.body.removeChild(warningOverlay);
+              actuallyShowPreview();
+            }
+          }, 500);
+        };
+        
+        // Múltiplos listeners para cobrir diferentes eventos no iOS
+        window.addEventListener('orientationchange', orientationHandler);
+        window.addEventListener('resize', orientationHandler);
+        screen.orientation?.addEventListener('change', orientationHandler);
+        
+        // Cleanup listeners
+        warningOverlay._cleanupListeners = () => {
+          window.removeEventListener('orientationchange', orientationHandler);
+          window.removeEventListener('resize', orientationHandler);
+          screen.orientation?.removeEventListener('change', orientationHandler);
+        };
+      }
     }
 
     // Função real para mostrar preview (depois da verificação de orientação)
@@ -891,6 +1036,18 @@
 
     // Função para mostrar preview em tela cheia (para câmera) - COM VERIFICAÇÃO OBRIGATÓRIA DE LANDSCAPE
     function showPreview() {
+      // Debug específico para iPhone (pode ser removido depois)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (isIOS) {
+        console.log('iPhone detectado, verificando orientação...');
+        console.log('screen.orientation:', screen.orientation);
+        console.log('window.orientation:', window.orientation);
+        console.log('window.innerWidth:', window.innerWidth);
+        console.log('window.innerHeight:', window.innerHeight);
+        console.log('screen.width:', screen.width);
+        console.log('screen.height:', screen.height);
+      }
+      
       // VERIFICAR ORIENTAÇÃO OBRIGATORIAMENTE NO MOBILE
       if (!isMobileLandscape()) {
         showOrientationWarning();
@@ -931,6 +1088,7 @@
       if (isMobile) {
         // Configurar viewport para tela cheia no mobile
         let viewport = document.querySelector('meta[name="viewport"]');
+        const originalViewport = viewport ? viewport.getAttribute('content') : '';
         if (viewport) {
           viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
         }
@@ -953,16 +1111,64 @@
           previewContainer.style.left = '0';
           previewContainer.style.zIndex = '99999';
           
-          // Esconder barra de endereços no Safari
-          setTimeout(() => {
+          // Ajustar para diferentes orientações no iOS
+          const handleIOSOrientation = () => {
+            const currentWidth = window.innerWidth;
+            const currentHeight = window.innerHeight;
+            
+            // Forçar recalculo das dimensões
+            previewContainer.style.width = currentWidth + 'px';
+            previewContainer.style.height = currentHeight + 'px';
+            
+            // Configurar a imagem para ocupar toda a tela mantendo aspect ratio
+            img.style.width = currentWidth + 'px';
+            img.style.height = currentHeight + 'px';
+            img.style.objectFit = 'contain';
+            img.style.objectPosition = 'center';
+            img.style.padding = '0';
+            img.style.margin = '0';
+            
+            // Forçar reflow
+            previewContainer.offsetHeight;
+          };
+          
+          // Aplicar configuração inicial
+          setTimeout(handleIOSOrientation, 100);
+          
+          // Esconder barra de endereços no Safari - múltiplas tentativas
+          const hideIOSBars = () => {
             window.scrollTo(0, 1);
+            setTimeout(() => window.scrollTo(0, 0), 100);
             setTimeout(() => {
-              window.scrollTo(0, 0);
-            }, 100);
-          }, 100);
+              if (window.scrollY !== 0) {
+                window.scrollTo(0, 0);
+              }
+            }, 200);
+          };
+          
+          setTimeout(hideIOSBars, 100);
+          setTimeout(hideIOSBars, 500);
           
           // Adicionar classe específica para iOS
           previewContainer.classList.add('ios-fullscreen');
+          
+          // Listener para mudanças de orientação no iOS
+          const iosOrientationListener = () => {
+            setTimeout(handleIOSOrientation, 300);
+          };
+          
+          window.addEventListener('orientationchange', iosOrientationListener);
+          window.addEventListener('resize', iosOrientationListener);
+          
+          // Cleanup para iOS
+          previewContainer._iosCleanup = () => {
+            window.removeEventListener('orientationchange', iosOrientationListener);
+            window.removeEventListener('resize', iosOrientationListener);
+            // Restaurar viewport
+            if (viewport && originalViewport) {
+              viewport.setAttribute('content', originalViewport);
+            }
+          };
           
         } else {
           // Android e outros: usar fullscreen nativo
@@ -979,20 +1185,30 @@
         }, 200);
         
         // Ajustar imagem para mobile
-        img.style.maxWidth = '90vw';
-        img.style.maxHeight = '85vh';
-        img.style.objectFit = 'contain';
+        if (!isIOS) { // iOS já foi configurado acima
+          img.style.width = '100vw';
+          img.style.height = '100vh';
+          img.style.objectFit = 'contain';
+          img.style.objectPosition = 'center';
+          img.style.padding = '0';
+          img.style.margin = '0';
+        }
       }
       
       // Tentar fullscreen nativo APENAS para Android e desktop
       if (!isIOS) {
-        if (previewContainer.requestFullscreen) {
-          previewContainer.requestFullscreen().catch(() => {});
-        } else if (previewContainer.webkitRequestFullscreen) {
-          previewContainer.webkitRequestFullscreen().catch(() => {});
-        } else if (previewContainer.mozRequestFullScreen) {
-          previewContainer.mozRequestFullScreen().catch(() => {});
-        }
+        const tryFullscreen = () => {
+          if (previewContainer.requestFullscreen) {
+            previewContainer.requestFullscreen().catch(() => {});
+          } else if (previewContainer.webkitRequestFullscreen) {
+            previewContainer.webkitRequestFullscreen().catch(() => {});
+          } else if (previewContainer.mozRequestFullScreen) {
+            previewContainer.mozRequestFullScreen().catch(() => {});
+          }
+        };
+        
+        // Delay para garantir que o elemento está no DOM
+        setTimeout(tryFullscreen, 200);
       }
       
       // Fazer as instruções desaparecerem após 2 segundos (mais tempo para ler)
@@ -1094,8 +1310,26 @@
     // Função para fechar preview
     function closePreviewFullscreen() {
       const preview = document.querySelector('.png-preview-fullscreen');
+      const orientationWarning = document.getElementById('orientation-warning');
+      
+      // Fechar warning de orientação se estiver aberto
+      if (orientationWarning) {
+        // Limpar listeners do iOS se existirem
+        if (orientationWarning._cleanupListeners) {
+          orientationWarning._cleanupListeners();
+        }
+        if (document.body.contains(orientationWarning)) {
+          document.body.removeChild(orientationWarning);
+        }
+      }
+      
       if (preview) {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
+        // Cleanup específico para iOS
+        if (isIOS && preview._iosCleanup) {
+          preview._iosCleanup();
+        }
         
         // Sair da tela cheia (apenas para não-iOS)
         if (!isIOS) {
@@ -1111,7 +1345,7 @@
         // Restaurar configurações do mobile
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (isMobile) {
-          // Restaurar viewport
+          // Restaurar viewport para configuração padrão
           let viewport = document.querySelector('meta[name="viewport"]');
           if (viewport) {
             viewport.setAttribute('content', 'width=device-width, initial-scale=1');
@@ -1125,6 +1359,13 @@
           if (isIOS) {
             document.documentElement.style.height = '';
             document.body.style.height = '';
+            
+            // Forçar scroll de volta ao topo
+            setTimeout(() => {
+              window.scrollTo(0, 0);
+              document.documentElement.scrollTop = 0;
+              document.body.scrollTop = 0;
+            }, 100);
           }
         }
         
@@ -1134,7 +1375,10 @@
         }
         
         // Remover elemento
-        document.body.removeChild(preview);
+        if (document.body.contains(preview)) {
+          document.body.removeChild(preview);
+        }
+        
         showNotification('Preview fechado');
       }
     }
