@@ -1,52 +1,52 @@
-# Claquete Digital 🎬
+# Digital Clapperboard Generator 🎬
 
-Uma claquete digital moderna e funcional para produções audiovisuais.
+A modern and functional digital clapperboard for audiovisual productions.
 
-## 🚀 [Acesse a Claquete Digital](https://danihre.github.io/clapperboard-generator/)
+## 🚀 [Access Digital Clapperboard](https://danihre.github.io/clapperboard-generator/)
 
-## ✨ Funcionalidades
+## ✨ Features
 
-- **Campos Editáveis**: Todos os campos podem ser editados clicando neles
-- **Auto-save**: Salva automaticamente as alterações
-- **Data/Hora Automática**: Atualiza automaticamente conforme o relógio
-- **Exportar PNG**: Gera imagem da claquete em alta qualidade
-- **Design Responsivo**: Funciona em desktop e mobile
-- **Fonte Digital**: Usa fonte DS-Digital no campo TEASER
+- **Editable Fields**: All fields can be edited by clicking on them
+- **Auto-save**: Automatically saves changes
+- **Auto Date/Time**: Updates automatically according to the clock
+- **Export PNG**: Generates high-quality clapperboard image
+- **Responsive Design**: Works on desktop and mobile
+- **Digital Font**: Uses DS-Digital font in TEASER field
 
-## 📱 Campos Disponíveis
+## 📱 Available Fields
 
-- **TITLE** - Título da produção
-- **DIR** - Diretor
-- **DP** - Diretor de Fotografia
-- **DATE** - Data e horário (atualiza automaticamente)
-- **FPS** - Frames por segundo
-- **CAMERA** - Modelo da câmera
-- **TEASER** - Texto central com fonte digital
-- **SLATE** - Identificador da claquete
-- **ROLL** - Número do rolo
-- **SCENE** - Número da cena
-- **TAKE** - Número da tomada
-- **NOTES** - Anotações livres
+- **TITLE** - Production title
+- **DIR** - Director
+- **DP** - Director of Photography
+- **DATE** - Date and time (updates automatically)
+- **FPS** - Frames per second
+- **CAMERA** - Camera model
+- **TEASER** - Central text with digital font
+- **SLATE** - Clapperboard identifier
+- **ROLL** - Roll number
+- **SCENE** - Scene number
+- **TAKE** - Take number
+- **NOTES** - Free notes
 
-## ⌨️ Atalhos do Teclado
+## ⌨️ Keyboard Shortcuts
 
-- `Ctrl+S` - Salvar
-- `Ctrl+R` - Limpar dados
-- `Ctrl+E` - Exportar como PNG
-- `Enter` no campo TAKE - Incrementa take automaticamente
+- `Ctrl+S` - Save
+- `Ctrl+R` - Clear data
+- `Ctrl+E` - Export as PNG
+- `Enter` in TAKE field - Auto increment take
 
-## 🛠️ Tecnologias
+## 🛠️ Technologies
 
 - HTML5
 - CSS3 (Grid Layout)
-- JavaScript Vanilla
-- Font: Montserrat + DS-Digital
-- HTML2Canvas (para exportação)
+- Vanilla JavaScript
+- Fonts: Montserrat + DS-Digital
+- HTML2Canvas (for export)
 
-## 📄 Licença
+## 📄 License
 
-MIT License - Use livremente em seus projetos!
+MIT License - Use freely in your projects!
 
 ---
 
-**Desenvolvido para facilitar produções audiovisuais** 🎥
+**Developed to facilitate audiovisual productions** 🎥
