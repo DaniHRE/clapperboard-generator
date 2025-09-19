@@ -1,0 +1,23 @@
+# Arquivos do sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.log
+
+# Arquivos do editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependências
+node_modules/
+*.lock

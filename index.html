@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Claquete Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #000;
+      --fg: #fff;
+      --accent: #e11212;
+      --border: #ffffff;
+      --line: 2px;
+      --maxw: 1280px;
+      --gap: 0;
+    }
+
+    @font-face{
+      font-family: "DS-Digi";
+      src: url("./DS-DIGI.TTF") format("truetype");
+      font-weight: 400 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Montserrat', sans-serif;
+      line-height: 1.25;
+    }
+
+    .frame{
+      max-width: var(--maxw);
+      margin: 24px auto;
+      display: grid;
+      gap: var(--gap);
+    }
+
+    .grid{
+      display: grid;
+      gap: var(--gap);
+      grid-template-columns: repeat(12, 1fr);
+    }
+
+    .box{
+      border: var(--line) solid var(--border);
+      padding: clamp(12px, 1.5vw, 16px);
+      min-height: 84px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .label{
+      font-size: clamp(9px, 1vw, 11px);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity: 1;
+      font-weight: bold;
+      color: #ffffff;
+      padding: 0 8px;
+      margin-bottom: 2px;
+    }
+    .value{ margin-top: .1rem; font-weight: 700; font-size: clamp(15px, 1.8vw, 20px); padding: 0 12px; }
+    .value-xl{ font-size: clamp(18px, 2.4vw, 24px); }
+    .value-xxl{ font-size: clamp(36px, 5vw, 64px); }
+
+    .digital{ font-family: "DS-Digi", monospace; color: var(--accent); letter-spacing: .04em; font-size: clamp(48px, 7vw, 90px) !important; }
+
+    .top-left{ grid-column: 1 / span 6; }
+    .top-right{ grid-column: 7 / span 6; padding: 0; display: flex; flex-direction: column; }
+
+    .flexdata{
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 100%;
+    }
+    .cell{
+      flex: 1;
+      border-top: var(--line) solid var(--border);
+      padding: clamp(12px, 1.5vw, 16px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .cell:first-child{ border-top: none; }
+
+    /* Ajuste: FPS e Camera lado a lado na mesma linha */
+    .row-split{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      flex: 1;
+    }
+    .row-split .cell{
+      border-top: var(--line) solid var(--border);
+      border-left: var(--line) solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .row-split .cell:first-child{ border-left: none; }
+
+    .center-banner{ grid-column: 1 / span 12; align-items: center; justify-content: center; text-align: center; padding: clamp(4px, 0.5vw, 8px); }
+
+    .low-slate{ grid-column: 1 / span 3; }
+    .low-roll{  grid-column: 4 / span 3; }
+    .low-scene{ grid-column: 7 / span 3; }
+    .low-take{  grid-column: 10 / span 3; }
+
+    .notes{ grid-column: 1 / span 12; min-height: 96px; }
+
+    @media (max-width: 760px){
+      .top-left, .top-right, .center-banner, .low-slate, .low-roll, .low-scene, .low-take, .notes{
+        grid-column: 1 / -1;
+      }
+      .value-xxl{ font-size: clamp(32px, 10vw, 56px); }
+    }
+
+    .stack > .pair + .pair{ margin-top: clamp(10px, 1.2vw, 14px); }
+
+    /* Estilos para campos editáveis */
+    [contenteditable="true"] {
+      outline: none;
+      cursor: text;
+      transition: background-color 0.2s ease;
+    }
+    [contenteditable="true"]:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    [contenteditable="true"]:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+    [contenteditable="true"]:empty:before {
+      content: attr(data-placeholder);
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Controles */
+    .controls {
+      margin: 20px auto;
+      text-align: center;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: var(--bg);
+      color: var(--fg);
+      border: var(--line) solid var(--border);
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+  </style>
+</head>
+<body>
+  <main class="frame">
+    <section class="grid">
+
+      <div class="box top-left">
+        <div class="stack">
+          <div class="pair">
+            <div class="label">Title</div>
+            <div class="value value-xl" contenteditable="true" id="title">Metodologias Ágeis</div>
+          </div>
+          <div class="pair">
+            <div class="label">Dir</div>
+            <div class="value value-xl" contenteditable="true" id="director">Lucas Caetano</div>
+          </div>
+          <div class="pair">
+            <div class="label">DP</div>
+            <div class="value value-xl" contenteditable="true" id="dp">Lucas Caetano</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="box top-right">
+        <div class="flexdata">
+          <div class="cell">
+            <div class="label">Date</div>
+            <div class="value value-xl" contenteditable="true" id="date" style="font-size: 32px;">19 set 2025 - 14:30</div>
+          </div>
+          <div class="row-split">
+            <div class="cell">
+              <div class="label">FPS</div>
+              <div class="value value-xl" contenteditable="true" id="fps" style="font-size: 45px;">30</div>
+            </div>
+            <div class="cell">
+              <div class="label">Camera</div>
+              <div class="value" contenteditable="true" id="camera" style="font-size: 53px;">&nbsp;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="box center-banner">
+        <div class="value-xxl digital" contenteditable="true" id="teaser">TEASER</div>
+      </div>
+
+      <div class="box low-slate">
+        <div class="label">Slate</div>
+        <div class="value value-xxl" contenteditable="true" id="slate">A1</div>
+      </div>
+      <div class="box low-roll">
+        <div class="label">Roll</div>
+        <div class="value value-xxl" contenteditable="true" id="roll">1</div>
+      </div>
+      <div class="box low-scene">
+        <div class="label">Scene</div>
+        <div class="value value-xxl" contenteditable="true" id="scene">1</div>
+      </div>
+      <div class="box low-take">
+        <div class="label">Take</div>
+        <div class="value value-xxl" contenteditable="true" id="take">1</div>
+      </div>
+
+      <div class="box notes">
+        <div class="label">Notes</div>
+        <div class="value" contenteditable="true" id="notes" style="min-height: 60px; margin-top: 8px;">&nbsp;</div>
+      </div>
+
+    </section>
+    
+    <div class="controls">
+      <button class="btn" onclick="saveData()">Salvar</button>
+      <button class="btn" onclick="loadData()">Carregar</button>
+      <button class="btn" onclick="resetData()">Limpar</button>
+      <button class="btn" onclick="incrementTake()">Next Take</button>
+      <button class="btn" onclick="exportImage()">Exportar PNG</button>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    // Campos editáveis
+    const fields = {
+      title: document.getElementById('title'),
+      director: document.getElementById('director'),
+      dp: document.getElementById('dp'),
+      date: document.getElementById('date'),
+      fps: document.getElementById('fps'),
+      camera: document.getElementById('camera'),
+      teaser: document.getElementById('teaser'),
+      slate: document.getElementById('slate'),
+      roll: document.getElementById('roll'),
+      scene: document.getElementById('scene'),
+      take: document.getElementById('take'),
+      notes: document.getElementById('notes')
+    };
+
+    // Auto-save quando campos são alterados
+    Object.values(fields).forEach(field => {
+      field.addEventListener('input', autoSave);
+      field.addEventListener('blur', autoSave);
+    });
+
+    // Só números nos campos numéricos
+    ['fps', 'roll', 'scene', 'take'].forEach(fieldName => {
+      fields[fieldName].addEventListener('input', function(e) {
+        this.textContent = this.textContent.replace(/[^0-9]/g, '');
+      });
+    });
+
+    // Funções principais
+    function saveData() {
+      const data = {};
+      Object.keys(fields).forEach(key => {
+        data[key] = fields[key].textContent || fields[key].innerText;
+      });
+      localStorage.setItem('claqueteData', JSON.stringify(data));
+      showNotification('Dados salvos!');
+    }
+
+    function loadData() {
+      const saved = localStorage.getItem('claqueteData');
+      if (saved) {
+        const data = JSON.parse(saved);
+        Object.keys(data).forEach(key => {
+          if (fields[key]) {
+            fields[key].textContent = data[key];
+          }
+        });
+        showNotification('Dados carregados!');
+      } else {
+        showNotification('Nenhum dado salvo encontrado!');
+      }
+    }
+
+    function resetData() {
+      if (confirm('Limpar todos os campos?')) {
+        fields.title.textContent = 'Metodologias Ágeis';
+        fields.director.textContent = 'Lucas Caetano';
+        fields.dp.textContent = 'Lucas Caetano';
+        fields.date.textContent = getCurrentDate();
+        fields.fps.textContent = '30';
+        fields.camera.textContent = '';
+        fields.teaser.textContent = 'TEASER';
+        fields.slate.textContent = 'A1';
+        fields.roll.textContent = '1';
+        fields.scene.textContent = '1';
+        fields.take.textContent = '1';
+        fields.notes.textContent = '';
+        localStorage.removeItem('claqueteData');
+        showNotification('Dados limpos!');
+      }
+    }
+
+    function incrementTake() {
+      const currentTake = parseInt(fields.take.textContent) || 0;
+      fields.take.textContent = currentTake + 1;
+      autoSave();
+      showNotification(`Take: ${currentTake + 1}`);
+    }
+
+    function autoSave() {
+      const data = {};
+      Object.keys(fields).forEach(key => {
+        data[key] = fields[key].textContent || fields[key].innerText;
+      });
+      localStorage.setItem('claqueteData', JSON.stringify(data));
+    }
+
+    function getCurrentDate() {
+      const now = new Date();
+      const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      return `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} - ${hours}:${minutes}`;
+    }
+
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed; top: 20px; right: 20px; z-index: 1000;
+        background: var(--bg); color: var(--fg); border: 2px solid var(--border);
+        padding: 12px 16px; font-size: 12px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.05em;
+        opacity: 0; transform: translateX(100%); transition: all 0.3s ease;
+      `;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+      }, 10);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => document.body.removeChild(notification), 300);
+      }, 2500);
+    }
+
+    // Função para exportar como imagem
+    function exportImage() {
+      showNotification('Gerando imagem...');
+      
+      // Esconder os controles temporariamente
+      const controls = document.querySelector('.controls');
+      controls.style.display = 'none';
+      
+      // Capturar apenas a claquete
+      const claqueteElement = document.querySelector('.frame');
+      
+      html2canvas(claqueteElement, {
+        backgroundColor: '#000000',
+        scale: 2, // Maior qualidade
+        useCORS: true,
+        allowTaint: false,
+        width: claqueteElement.offsetWidth,
+        height: claqueteElement.offsetHeight,
+        onclone: (clonedDoc) => {
+          // Garantir que a fonte seja carregada no clone
+          const clonedElement = clonedDoc.querySelector('.digital');
+          if (clonedElement) {
+            clonedElement.style.fontFamily = '"DS-Digi", monospace';
+          }
+        }
+      }).then(canvas => {
+        // Restaurar controles
+        controls.style.display = 'flex';
+        
+        // Criar nome do arquivo
+        const slate = fields.slate.textContent || 'A1';
+        const scene = fields.scene.textContent || '1';
+        const take = fields.take.textContent || '1';
+        const filename = `claquete_${slate}_${scene}_${take}.png`;
+        
+        // Download da imagem
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+        
+        showNotification(`Imagem salva: ${filename}`);
+        
+      }).catch(error => {
+        // Restaurar controles em caso de erro
+        controls.style.display = 'flex';
+        console.error('Erro ao exportar:', error);
+        showNotification('Erro ao exportar imagem');
+      });
+    }
+
+    // Teclas de atalho
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey || e.metaKey) {
+        switch(e.key) {
+          case 's':
+            e.preventDefault();
+            saveData();
+            break;
+          case 'r':
+            e.preventDefault();
+            resetData();
+            break;
+          case 'e':
+            e.preventDefault();
+            exportImage();
+            break;
+          case 'Enter':
+            if (document.activeElement === fields.take) {
+              e.preventDefault();
+              incrementTake();
+            }
+            break;
+        }
+      }
+    });
+
+    // Carregar dados salvos na inicialização
+    window.addEventListener('load', function() {
+      const saved = localStorage.getItem('claqueteData');
+      if (saved) {
+        const data = JSON.parse(saved);
+        Object.keys(data).forEach(key => {
+          if (fields[key] && data[key]) {
+            fields[key].textContent = data[key];
+          }
+        });
+      }
+      
+      // Iniciar atualização automática da data/hora
+      startDateTimeUpdater();
+    });
+
+    // Função para atualizar data/hora automaticamente
+    function startDateTimeUpdater() {
+      function updateDateTime() {
+        // Só atualiza se o campo de data não foi editado recentemente
+        const now = new Date();
+        const currentDateTime = getCurrentDate();
+        
+        // Verifica se o usuário não está editando o campo de data
+        if (document.activeElement !== fields.date) {
+          // Verifica se a data atual é diferente da exibida
+          const currentDisplayed = fields.date.textContent;
+          const currentTime = currentDateTime.split(' ').slice(-1)[0]; // Pega só a hora
+          const displayedTime = currentDisplayed.split(' ').slice(-1)[0]; // Pega só a hora exibida
+          
+          // Se a hora mudou, atualiza
+          if (currentTime !== displayedTime) {
+            fields.date.textContent = currentDateTime;
+            autoSave();
+          }
+        }
+      }
+      
+      // Atualiza a cada minuto (60000ms)
+      setInterval(updateDateTime, 60000);
+      
+      // Primeira atualização
+      updateDateTime();
+    }
+  </script>
+</body>
+</html>

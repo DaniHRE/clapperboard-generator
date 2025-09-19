@@ -1,0 +1,355 @@
+/* Importar fonte digital */
+@font-face {
+    font-family: 'DS-Digital';
+    src: url('DS-DIGI.TTF') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Reset e configurações gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: white;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.claquete-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.claquete {
+    background-color: black;
+    border: 4px solid white;
+    width: 900px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Seção superior - exatamente como na imagem */
+.top-section {
+    display: flex;
+    height: 35%;
+    border-bottom: 3px solid white;
+}
+
+.left-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 3px solid white;
+}
+
+.title-field {
+    flex: 1;
+    padding: 12px 15px;
+    border-bottom: 3px solid white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.director-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 15px;
+}
+
+.director-section .field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.director-section .field:first-child {
+    border-bottom: 3px solid white;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.right-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.date-field {
+    flex: 1;
+    padding: 12px 15px;
+    border-bottom: 3px solid white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tech-section {
+    flex: 1;
+    display: flex;
+    padding: 12px 15px;
+}
+
+.tech-section .field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tech-section .field:first-child {
+    border-right: 3px solid white;
+    padding-right: 15px;
+    margin-right: 15px;
+}
+
+/* Seção do teaser - centralizada */
+.teaser-section {
+    height: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+}
+
+.teaser-text {
+    font-family: 'DS-Digital', monospace;
+    font-size: 64px;
+    color: #ff0000;
+    letter-spacing: 12px;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+    cursor: text;
+}
+
+.teaser-text:focus {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+/* Seção inferior - 4 campos em linha */
+.bottom-section {
+    height: 25%;
+    display: flex;
+    border-top: 3px solid white;
+    border-bottom: 3px solid white;
+}
+
+.bottom-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 20px;
+}
+
+.bottom-field:not(:last-child) {
+    border-right: 3px solid white;
+}
+
+.bottom-field label {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.slate-input, .roll-input, .scene-input, .take-input {
+    font-size: 48px !important;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: white;
+    outline: none;
+}
+
+/* Seção de notas */
+.notes-section {
+    flex: 1;
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.notes-section label {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.notes-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    outline: none;
+    resize: none;
+}
+
+.notes-textarea:focus {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Estilos dos campos */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field label {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+}
+
+.title-field label, .date-field label {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.editable-field {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-family: Arial, sans-serif;
+    outline: none;
+    padding: 5px 0;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.editable-field:focus {
+    border-bottom: 1px solid #fff;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.title-input {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.date-input {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.fps-input {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.camera-input {
+    font-size: 18px;
+}
+
+/* Controles */
+.controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.control-btn {
+    background-color: #333;
+    color: white;
+    border: 2px solid white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+.control-btn:hover {
+    background-color: white;
+    color: black;
+}
+
+.control-btn:active {
+    transform: scale(0.98);
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+    .claquete {
+        width: 90vw;
+        height: auto;
+        min-height: 400px;
+    }
+    
+    .teaser-text {
+        font-size: 32px;
+        letter-spacing: 4px;
+    }
+    
+    .slate-input, .roll-input, .scene-input, .take-input {
+        font-size: 24px !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .top-section {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "title"
+            "date"
+            "director"
+            "tech";
+    }
+    
+    .title-info {
+        border-right: none;
+        border-bottom: 2px solid white;
+        padding-right: 0;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .crew-info {
+        padding-left: 0;
+    }
+    
+    .bottom-section {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+    }
+    
+    .scene-info {
+        border-right: none;
+        border-bottom: 2px solid white;
+    }
+    
+    .roll-info {
+        border-bottom: 2px solid white;
+    }
+}
