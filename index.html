@@ -125,16 +125,26 @@
 
     .notes{ grid-column: 1 / span 12; min-height: 96px; }
 
-    /* Mobile - Layout vertical */
-    @media (max-width: 760px){
+    /* Mobile - Vertical APENAS no modo retrato */
+    @media (max-width: 760px) and (orientation: portrait){
       .frame {
         width: 98vw; /* 98% da largura no mobile - máxima expansão */
         margin: 1vw auto;
       }
       .top-left, .top-right, .center-banner, .low-slate, .low-roll, .low-scene, .low-take, .notes{
-        grid-column: 1 / -1; /* Uma coluna só no mobile */
+        grid-column: 1 / -1; /* Uma coluna só no mobile em retrato */
       }
       .value-xxl{ font-size: clamp(32px, 10vw, 56px); }
+    }
+
+    /* Mobile - Paisagem (ex.: Galaxy S8+ deitado) mantém layout horizontal */
+    @media (max-width: 760px) and (orientation: landscape){
+      .frame { width: 100vw; margin: 1vw auto; }
+      /* Não sobrescreve grid-column -> mantém 12 colunas */
+      .label{ font-size: clamp(8px, 1.6vw, 10px); }
+      .value{ font-size: clamp(12px, 2.2vw, 16px); }
+      .value-xl{ font-size: clamp(14px, 2.6vw, 18px); }
+      .value-xxl{ font-size: clamp(22px, 6vw, 40px); }
     }
 
     /* Tablet - Expansão lateral máxima */
@@ -423,7 +433,7 @@
     .ios-fullscreen img {
       width: 100vw !important;
       height: 100vh !important;
-      object-fit: contain !important;
+  object-fit: contain !important;
       object-position: center !important;
       padding: 0 !important;
       margin: 0 !important;
@@ -506,7 +516,7 @@
     .png-preview-fullscreen img {
       width: 100vw;
       height: 100vh;
-      object-fit: contain;
+  object-fit: contain; /* garantir claquete inteira no preview */
       object-position: center;
       border: none;
       /* Garantir centralização no mobile */
@@ -888,14 +898,11 @@
         return isLandscapeByDimensions || isLandscapeByScreenComparison;
       } else {
         // Para Android e outros
-        if (screen.orientation) {
-          return screen.orientation.angle === 90 || screen.orientation.angle === -90;
-        } else if (window.orientation !== undefined) {
-          return window.orientation === 90 || window.orientation === -90;
-        } else {
-          // Fallback: verificar dimensões da tela
-          return window.innerWidth > window.innerHeight;
-        }
+  // Alguns Android (ex.: Galaxy S8+) podem reportar orientação errada; use múltiplos checks
+  const byScreenAPI = (screen.orientation && (screen.orientation.angle === 90 || screen.orientation.angle === -90));
+  const byWindowAPI = (window.orientation !== undefined && (window.orientation === 90 || window.orientation === -90));
+  const byDimensions = window.innerWidth > window.innerHeight; // mais confiável na prática
+  return byScreenAPI || byWindowAPI || byDimensions;
       }
     }
 
@@ -1029,33 +1036,22 @@
       // Capturar apenas a claquete
       const claqueteElement = document.querySelector('.frame');
       
-      // FORÇAR DIMENSÕES LANDSCAPE para captura
-      const originalWidth = claqueteElement.offsetWidth;
-      const originalHeight = claqueteElement.offsetHeight;
-      
-      // Garantir proporção landscape mínima (16:9 ou similar)
-      const landscapeWidth = Math.max(originalWidth, originalHeight * 1.6);
-      const landscapeHeight = Math.min(originalHeight, landscapeWidth / 1.6);
-      
-      html2canvas(claqueteElement, {
+    // Capturar no tamanho natural do elemento (para o preview caber inteiro)
+    html2canvas(claqueteElement, {
         backgroundColor: '#000000',
         scale: 2,
         useCORS: true,
         allowTaint: false,
-        width: landscapeWidth,
-        height: landscapeHeight,
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.querySelector('.digital');
           if (clonedElement) {
             clonedElement.style.fontFamily = '"DS-Digi", monospace';
           }
-          // Forçar largura landscape no elemento clonado
+          // Expandir a claquete ao máximo horizontalmente durante a captura (sem margens)
           const clonedFrame = clonedDoc.querySelector('.frame');
           if (clonedFrame) {
-            clonedFrame.style.width = landscapeWidth + 'px';
-            clonedFrame.style.height = landscapeHeight + 'px';
-            clonedFrame.style.minWidth = landscapeWidth + 'px';
-            clonedFrame.style.maxHeight = landscapeHeight + 'px';
+            clonedFrame.style.width = '100vw';
+            clonedFrame.style.margin = '0';
           }
         }
       }).then(canvas => {
@@ -1155,7 +1151,7 @@
             // Configurar a imagem para ocupar toda a tela mantendo aspect ratio
             img.style.width = currentWidth + 'px';
             img.style.height = currentHeight + 'px';
-            img.style.objectFit = 'contain';
+            img.style.objectFit = 'contain'; // manter claquete inteira
             img.style.objectPosition = 'center';
             img.style.padding = '0';
             img.style.margin = '0';
@@ -1220,7 +1216,7 @@
         if (!isIOS) { // iOS já foi configurado acima
           img.style.width = '100vw';
           img.style.height = '100vh';
-          img.style.objectFit = 'contain';
+          img.style.objectFit = 'contain'; // mostrar inteiro, sem cortes
           img.style.objectPosition = 'center';
           img.style.padding = '0';
           img.style.margin = '0';
